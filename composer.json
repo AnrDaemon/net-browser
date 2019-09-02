@@ -1,0 +1,36 @@
+{
+    "name": "anrdaemon/net-browser",
+    "description": "A very thin OOP cURL wrapper with runtime cookie persistence",
+    "license": "WTFPL",
+    "authors": [
+        {
+            "name": "Andrey Repin",
+            "email": "anrdaemon@yandex.ru"
+        }
+    ],
+    "require": {
+        "php": "^5.3.6 || ^7.0"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-trunk": "0.x-dev",
+            "dev-master": "0.x-dev"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "AnrDaemon\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AnrDaemon\\Tests\\": "test/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7"
+    },
+    "config": {
+        "bin-dir": "bin"
+    }
+}
