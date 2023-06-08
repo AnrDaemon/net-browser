@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "php": "^5.3.6 || ^7.0"
+        "php": "^5.6 || ^7.0 || ^8.0"
     },
     "extra": {
         "branch-alias": {
@@ -31,6 +31,7 @@
         "phpunit/phpunit": "^5.7"
     },
     "config": {
-        "bin-dir": "bin"
+        "bin-dir": "bin",
+        "platform": { "php": "5.6" }
     }
 }

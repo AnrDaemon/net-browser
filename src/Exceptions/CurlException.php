@@ -1,7 +1,7 @@
 <?php
 /** Curl errors wrapper
 *
-* @version SVN: $Id: CurlException.php 1030 2019-09-02 07:00:58Z anrdaemon $
+* @version SVN: $Id: CurlException.php 1128 2023-06-08 21:26:22Z anrdaemon $
 */
 
 namespace AnrDaemon\Exceptions;
@@ -11,10 +11,10 @@ extends \RuntimeException
 {
   public function __construct($curl = null, \Exception $previous = null)
   {
-    if(is_resource($curl))
+    if(is_resource($curl) || is_object($curl) && $curl instanceof \CurlHandle)
     {
       $error = curl_errno($curl);
-      $message = version_compare(PHP_VERSION, '5.5.0', '<') ? "cURL error #{$error}" : curl_strerror($error);
+      $message = curl_strerror($error);
       $text = curl_error($curl);
       if(!empty($text))
       {
