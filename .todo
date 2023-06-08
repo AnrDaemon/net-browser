@@ -1,3 +1,2 @@
--Net:Browser - Custom requests with data-content through CURLOPT_POST (tested-working)
 Net:Browser - CURLOPT_RETURNTRANSFER with CURLOPT_FILE
 Net:Browser - Overall refactor the API with newfound knowledge.
