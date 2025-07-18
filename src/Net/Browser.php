@@ -132,7 +132,8 @@ class Browser
    *
    * @return string Headers read through last request.
    */
-  public function getHeaders(){
+  public function getHeaders()
+  {
     return $this->headers;
   }
 
