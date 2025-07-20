@@ -208,9 +208,9 @@ class Browser
   public function get($url, $method = "GET")
   {
     return $this->request([
-      CURLOPT_HTTPGET => true,
-      CURLOPT_CUSTOMREQUEST => $method ?: "GET",
-      CURLOPT_URL => "$url",
+      \CURLOPT_HTTPGET => true,
+      \CURLOPT_CUSTOMREQUEST => $method ?: "GET",
+      \CURLOPT_URL => "$url",
     ]);
   }
 
@@ -235,10 +235,10 @@ class Browser
   public function post($url, $data = null, $method = "POST")
   {
     return $this->request([
-      CURLOPT_POST => true,
-      CURLOPT_CUSTOMREQUEST => $method ?: "POST",
-      CURLOPT_URL => "$url",
-      CURLOPT_POSTFIELDS => $data ?: '',
+      \CURLOPT_POST => true,
+      \CURLOPT_CUSTOMREQUEST => $method ?: "POST",
+      \CURLOPT_URL => "$url",
+      \CURLOPT_POSTFIELDS => $data ?: '',
     ]);
   }
 
@@ -263,11 +263,11 @@ class Browser
   public function put($url, $data = null, $len = null, $method = "PUT")
   {
     return $this->request([
-      CURLOPT_PUT => true,
-      CURLOPT_CUSTOMREQUEST => $method ?: "PUT",
-      CURLOPT_URL => "$url",
-      CURLOPT_INFILE => $data,
-      CURLOPT_INFILESIZE => $len,
+      \CURLOPT_PUT => true,
+      \CURLOPT_CUSTOMREQUEST => $method ?: "PUT",
+      \CURLOPT_URL => "$url",
+      \CURLOPT_INFILE => $data,
+      \CURLOPT_INFILESIZE => $len,
     ]);
   }
 
