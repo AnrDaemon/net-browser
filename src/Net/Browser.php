@@ -76,7 +76,7 @@ class Browser
     $result = $callback($this->curl, ...$params);
     if (\curl_errno($this->curl) !== \CURLE_OK)
     {
-      throw new CurlException($this->curl);
+      throw CurlException::fromInstance($this->curl);
     }
 
     if ($result === false)
@@ -276,9 +276,9 @@ class Browser
   public function __construct(array $params = null)
   {
     $result = \curl_init();
-    if ($result === false)
+    if (!$result)
     {
-      throw new CurlException;
+      throw new CurlException("Unable to initialize cURL instance: unknown error");
     }
 
     $this->curl = $result;

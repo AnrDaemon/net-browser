@@ -10,24 +10,27 @@ namespace AnrDaemon\Exceptions;
 class CurlException
 extends \Exception
 {
-  public function __construct($curl = null, \Exception $previous = null)
+  /** Creates an exception from cURL instance data
+   *
+   * @param \CurlHandle|resource $curl
+   * @param ?\Exception $previous
+   * @return void
+   */
+  public static function fromInstance($curl, \Exception $previous = null)
   {
-    if ((\is_object($curl) && $curl instanceof \CurlHandle) || \is_resource($curl) && \get_resource_type($curl) === 'curl')
+    if (!(\is_object($curl) && $curl instanceof \CurlHandle) && !(\is_resource($curl) && \get_resource_type($curl) === 'curl'))
     {
-      $error = \curl_errno($curl);
-      $message = \curl_strerror($error);
-      $text = \curl_error($curl);
-      if (!empty($text))
-      {
-        $message .= ": {$text}";
-      }
-    }
-    else
-    {
-      $message = $curl ?: 'Unable to initialize cURL instance: unknown error';
-      $error = 0;
+      throw new \Exception("Requires a cURL instance to proceed", -1);
     }
 
-    parent::__construct($message, $error, $previous);
+    $error = \curl_errno($curl);
+    $message = \curl_strerror($error);
+    $text = \curl_error($curl);
+    if (!empty($text))
+    {
+      $message .= ": {$text}";
+    }
+
+    return new static($message, $error, $previous);
   }
 }
