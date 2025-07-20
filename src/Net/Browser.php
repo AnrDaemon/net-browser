@@ -74,11 +74,15 @@ class Browser
   protected function perform(callable $callback, ...$params)
   {
     $result = $callback($this->curl, ...$params);
-    if (curl_errno($this->curl) !== CURLE_OK)
+    if (\curl_errno($this->curl) !== \CURLE_OK)
+    {
       throw new CurlException($this->curl);
+    }
 
     if ($result === false)
+    {
       throw new CurlException("Unable to perform $callback - unknown error.");
+    }
 
     return $result;
   }
@@ -104,10 +108,10 @@ class Browser
     $this->setOpt(\CURLOPT_HEADERFUNCTION, function ($curl, $chunk)
     {
       $this->headers .= $chunk;
-      return strlen($chunk);
+      return \strlen($chunk);
     });
-    $result = $this->perform('curl_exec');
-    $this->info = $this->perform('curl_getinfo');
+    $result = $this->perform('\curl_exec');
+    $this->info = $this->getInfo();
     return $result;
   }
 
@@ -116,13 +120,12 @@ class Browser
   /** Retrieving information about cURL handle
    *
    * @see \curl_getinfo()
-   *
-   * @param int $name A CURLINFO_* constant.
+   * @param ?int $name A CURLINFO_* constant.
    * @return mixed The requested information.
    */
-  public function getInfo($name)
+  public function getInfo($name = null)
   {
-    return $this->perform('curl_getinfo', $name);
+    return isset($name) ? $this->perform('\curl_getinfo', $name) : $this->perform('\curl_getinfo');
   }
 
   /** Returns response headers
@@ -147,7 +150,7 @@ class Browser
    */
   public function setOpt($name, $value = null)
   {
-    if (is_array($name))
+    if (\is_array($name))
     {
       try
       {
@@ -167,7 +170,7 @@ class Browser
     {
       try
       {
-        set_error_handler(
+        \set_error_handler(
           function ($s, $m, $f, $l, $c = null)
           use ($name)
           {
@@ -175,11 +178,11 @@ class Browser
           },
           \E_WARNING
         );
-        $this->perform('curl_setopt', $name, $value);
+        $this->perform('\curl_setopt', $name, $value);
       }
       finally
       {
-        restore_error_handler();
+        \restore_error_handler();
       }
     }
   }
@@ -272,40 +275,44 @@ class Browser
 
   public function __construct(array $params = null)
   {
-    $result = curl_init();
+    $result = \curl_init();
     if ($result === false)
+    {
       throw new CurlException;
+    }
 
     $this->curl = $result;
     $pki = [
-      CURLOPT_CAINFO => ini_get('openssl.cafile'),
-      CURLOPT_CAPATH => ini_get('openssl.capath'),
+      \CURLOPT_CAINFO => \ini_get('openssl.cafile'),
+      \CURLOPT_CAPATH => \ini_get('openssl.capath'),
     ];
-    $this->setOpt((array)$params + array_filter($pki) + [
-      CURLOPT_COOKIEFILE => '',
-      CURLOPT_COOKIESESSION => true,
-      CURLOPT_SAFE_UPLOAD => true,
-      CURLOPT_RETURNTRANSFER => true,
+    $this->setOpt((array)$params + \array_filter($pki) + [
+      \CURLOPT_COOKIEFILE => '',
+      \CURLOPT_COOKIESESSION => true,
+      \CURLOPT_SAFE_UPLOAD => true,
+      \CURLOPT_RETURNTRANSFER => true,
     ]);
   }
 
   /** @internal */
   public function __clone()
   {
-    $this->curl = curl_copy_handle($this->curl);
+    $this->curl = \curl_copy_handle($this->curl);
   }
 
   /** @internal */
   public function __destruct()
   {
-    curl_close($this->curl);
+    \curl_close($this->curl);
   }
 
   /** @internal */
   public function __get($name)
   {
     if ($name === "status")
+    {
       return $this->info;
+    }
 
     return $this->info[$name];
   }
