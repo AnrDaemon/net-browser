@@ -105,7 +105,7 @@ class Browser
     $this->info = null;
     $this->setOpt($options);
     $this->headers = "";
-    $this->setOpt(\CURLOPT_HEADERFUNCTION, function ($curl, $chunk)
+    $this->opt(\CURLOPT_HEADERFUNCTION, function ($curl, $chunk)
     {
       $this->headers .= $chunk;
       return \strlen($chunk);
@@ -140,10 +140,41 @@ class Browser
     return $this->headers;
   }
 
-  /** Setting cURL options.
+  /** Internal curl_setopt wrapper
    *
-   * @see \curl_setopt()
+   * @param int $name
+   * @param mixed $value
+   * @return void
+   */
+  private function opt($name, $value = null)
+  {
+    try
+    {
+      \set_error_handler(
+        function ($s, $m, $f, $l, $c = null)
+        use ($name)
+        {
+          if ($s & \E_WARNING)
+          {
+            throw new CurlException("$m (" . CurlOptions::name($name) . ").");
+          }
+        }
+      );
+      $this->perform('\curl_setopt', $name, $value);
+    }
+    finally
+    {
+      \restore_error_handler();
+    }
+  }
+
+  /** Setting cURL options
    *
+   * Does additional processing to protect internal object state.
+   *
+   * For actual wrapper, see {@see AnrDaemon\Net\Browser::opt() self::opt()} method.
+   *
+   * @see \curl_setopt() The `curl_setopt()` documentation.
    * @param int|array $name A CURLOPT_* constant or an array of option:value pairs.
    * @param ?mixed $value The value to set the option to.
    * @return void
@@ -166,24 +197,13 @@ class Browser
         throw $e->getCode() ? $e : new CurlException("Set failed at #$i: " . $e->getMessage());
       }
     }
+    else if ($name == \CURLOPT_HEADERFUNCTION)
+    {
+      trigger_error("Ignored setting the CURLOPT_HEADERFUNCTION. Response headers are available with Browser::getHeaders() after request completion.", \E_USER_DEPRECATED);
+    }
     else
     {
-      try
-      {
-        \set_error_handler(
-          function ($s, $m, $f, $l, $c = null)
-          use ($name)
-          {
-            throw new CurlException("$m (" . CurlOptions::name($name) . ").");
-          },
-          \E_WARNING
-        );
-        $this->perform('\curl_setopt', $name, $value);
-      }
-      finally
-      {
-        \restore_error_handler();
-      }
+      $this->opt($name, $value);
     }
   }
 
